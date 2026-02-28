@@ -1,13 +1,15 @@
-namespace NotificationService.Domain;
+namespace Hotelier.Events;
 
 /// <summary>
-/// Consumed from reservation-service when a new reservation is placed.
+/// Consumer-side DTO for ReservationCreated.
 /// </summary>
-public record ReservationCreated(
-    Guid ReservationId,
-    Guid GuestId,
-    Guid HostId,
-    Guid AccommodationId,
-    DateTime FromDate,
-    DateTime ToDate,
-    int NumOfGuests);
+public record ReservationCreated
+{
+    public Guid ReservationId { get; init; }
+    public Guid GuestId { get; init; }
+    public Guid HostId { get; init; }
+    public Guid AccommodationId { get; init; }
+    public DateTime FromDate { get; init; }
+    public DateTime ToDate { get; init; }
+    public int NumOfGuests { get; init; }
+}

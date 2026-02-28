@@ -13,6 +13,8 @@ using NotificationService.Infrastructure;
 using NotificationService.Domain;
 
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +64,8 @@ builder.Services.AddAuthorization();
 // -------------------------------------------------------
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumers(typeof(NotificationService.Infrastructure.ReservationCreatedConsumer).Assembly);
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.Host(rabbitHost, h =>
@@ -77,7 +81,12 @@ builder.Services.AddMassTransit(x =>
 // -------------------------------------------------------
 // API / Swagger
 // -------------------------------------------------------
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
