@@ -1,9 +1,14 @@
-namespace NotificationService.Domain;
+namespace Hotelier.Events;
 
-public record AccommodationRated(
-    Guid RatingId,
-    Guid GuestId,
-    Guid AccommodationId,
-    Guid HostId,
-    int Score,
-    string? Comment);
+/// <summary>
+/// Consumer-side DTO for AccommodationRated.
+/// </summary>
+public record AccommodationRated
+{
+    public Guid RatingId { get; init; }
+    public Guid GuestId { get; init; }
+    public Guid AccommodationId { get; init; }
+    public Guid HostId { get; init; }
+    public int Score { get; init; }
+    public string? Comment { get; init; }
+}

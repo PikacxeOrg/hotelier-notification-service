@@ -15,6 +15,20 @@ public class NotificationDispatcher(IMongoDatabase db, ILogger<NotificationDispa
 
     public async Task<bool> TryDispatchAsync(Notification notification, string notificationType)
     {
-        throw new NotImplementedException();
+        // Check user preferences
+        var pref = await _preferences
+            .Find(p => p.UserId == notification.To)
+            .FirstOrDefaultAsync();
+
+        if (pref?.Preferences.TryGetValue(notificationType, out var enabled) == true && !enabled)
+        {
+            logger.LogInformation(
+                "User {UserId} has disabled {NotificationType} – skipping notification",
+                notification.To, notificationType);
+            return false;
+        }
+
+        await _notifications.InsertOneAsync(notification);
+        return true;
     }
 }
