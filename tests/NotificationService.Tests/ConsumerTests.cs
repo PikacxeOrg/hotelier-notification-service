@@ -47,8 +47,8 @@ public class ConsumerTests
             GuestId = Guid.NewGuid(),
             HostId = Guid.NewGuid(),
             AccommodationId = Guid.NewGuid(),
-            FromDate = DateTime.UtcNow,
-            ToDate = DateTime.UtcNow.AddDays(3),
+            FromDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            ToDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(3),
             NumOfGuests = 2
         };
 
@@ -79,8 +79,8 @@ public class ConsumerTests
             GuestId = Guid.NewGuid(),
             HostId = Guid.NewGuid(),
             AccommodationId = Guid.NewGuid(),
-            FromDate = DateTime.UtcNow,
-            ToDate = DateTime.UtcNow.AddDays(3)
+            FromDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            ToDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(3)
         };
 
         await consumer.Consume(MockConsumeContext(evt));
@@ -110,8 +110,8 @@ public class ConsumerTests
             GuestId = Guid.NewGuid(),
             HostId = Guid.NewGuid(),
             AccommodationId = Guid.NewGuid(),
-            FromDate = DateTime.UtcNow,
-            ToDate = DateTime.UtcNow.AddDays(3),
+            FromDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            ToDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(3),
             Reason = "Fully booked"
         };
 
@@ -138,8 +138,8 @@ public class ConsumerTests
             GuestId = Guid.NewGuid(),
             HostId = Guid.NewGuid(),
             AccommodationId = Guid.NewGuid(),
-            FromDate = DateTime.UtcNow,
-            ToDate = DateTime.UtcNow.AddDays(3),
+            FromDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            ToDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(3),
             Reason = null
         };
 
@@ -167,8 +167,8 @@ public class ConsumerTests
             GuestId = Guid.NewGuid(),
             HostId = Guid.NewGuid(),
             AccommodationId = Guid.NewGuid(),
-            FromDate = DateTime.UtcNow,
-            ToDate = DateTime.UtcNow.AddDays(3)
+            FromDate = DateOnly.FromDateTime(DateTime.UtcNow),
+            ToDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(3)
         };
 
         await consumer.Consume(MockConsumeContext(evt));
