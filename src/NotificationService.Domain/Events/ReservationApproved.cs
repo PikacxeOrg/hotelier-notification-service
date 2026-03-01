@@ -9,6 +9,6 @@ public record ReservationApproved
     public Guid GuestId { get; init; }
     public Guid HostId { get; init; }
     public Guid AccommodationId { get; init; }
-    public DateTime FromDate { get; init; }
-    public DateTime ToDate { get; init; }
+    public DateOnly FromDate { get; init; }
+    public DateOnly ToDate { get; init; }
 }
