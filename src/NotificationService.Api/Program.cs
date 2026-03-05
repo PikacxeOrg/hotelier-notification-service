@@ -35,6 +35,7 @@ var mongoClient = new MongoClient(mongoConnectionString);
 var mongoDatabase = mongoClient.GetDatabase("hotelier_notification");
 builder.Services.AddSingleton(mongoClient);
 builder.Services.AddSingleton(mongoDatabase);
+builder.Services.AddSingleton<SseConnectionManager>();
 builder.Services.AddScoped<INotificationDispatcher, NotificationDispatcher>();
 
 // -------------------------------------------------------
@@ -55,6 +56,18 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
             ClockSkew = TimeSpan.Zero
         };
+        // Allow SSE clients to pass the token via ?access_token= query param
+        // (EventSource API does not support custom headers)
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = ctx =>
+            {
+                var token = ctx.Request.Query["access_token"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(token))
+                    ctx.Token = token;
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -64,7 +77,7 @@ builder.Services.AddAuthorization();
 // -------------------------------------------------------
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumers(typeof(NotificationService.Infrastructure.ReservationCreatedConsumer).Assembly);
+    x.AddConsumers(typeof(ReservationCreatedConsumer).Assembly);
 
     x.UsingRabbitMq((context, cfg) =>
     {

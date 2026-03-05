@@ -6,13 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
 using NotificationService.Domain;
+using NotificationService.Infrastructure;
 
 namespace NotificationService.Api;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class NotificationsController(IMongoDatabase db, ILogger<NotificationsController> logger) : ControllerBase
+public class NotificationsController(
+    IMongoDatabase db,
+    ILogger<NotificationsController> logger,
+    SseConnectionManager sseManager) : ControllerBase
 {
     private IMongoCollection<Notification> Notifications
         => db.GetCollection<Notification>("notifications");
@@ -207,6 +211,43 @@ public class NotificationsController(IMongoDatabase db, ILogger<NotificationsCon
             return NotFound(new { message = "Notification not found." });
 
         return NoContent();
+    }
+
+    // -------------------------------------------------------
+    // GET /api/notifications/stream  (Server-Sent Events)
+    // -------------------------------------------------------
+    [HttpGet("stream")]
+    public async Task StreamNotifications(CancellationToken ct)
+    {
+        var userId = GetCurrentUserId();
+        if (userId is null)
+        {
+            Response.StatusCode = 401;
+            return;
+        }
+
+        Response.Headers["Content-Type"]      = "text/event-stream";
+        Response.Headers["Cache-Control"]     = "no-cache";
+        Response.Headers["Connection"]        = "keep-alive";
+        Response.Headers["X-Accel-Buffering"] = "no"; // disable nginx buffering
+
+        var reader = sseManager.Subscribe(userId.Value);
+        try
+        {
+            await foreach (var json in reader.ReadAllAsync(ct))
+            {
+                await Response.WriteAsync($"data: {json}\n\n", ct);
+                await Response.Body.FlushAsync(ct);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // client disconnected – normal
+        }
+        finally
+        {
+            sseManager.Unsubscribe(userId.Value, reader);
+        }
     }
 
     // -------------------------------------------------------
