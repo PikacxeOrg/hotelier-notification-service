@@ -9,7 +9,7 @@ namespace NotificationService.Infrastructure;
 public class NotificationDispatcher(
     IMongoDatabase db,
     ILogger<NotificationDispatcher> logger,
-    SseConnectionManager sseManager)
+    ISseConnectionManager sseManager)
     : INotificationDispatcher
 {
     private readonly IMongoCollection<Notification> _notifications =

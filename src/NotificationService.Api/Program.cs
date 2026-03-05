@@ -35,7 +35,7 @@ var mongoClient = new MongoClient(mongoConnectionString);
 var mongoDatabase = mongoClient.GetDatabase("hotelier_notification");
 builder.Services.AddSingleton(mongoClient);
 builder.Services.AddSingleton(mongoDatabase);
-builder.Services.AddSingleton<SseConnectionManager>();
+builder.Services.AddSingleton<ISseConnectionManager, SseConnectionManager>();
 builder.Services.AddScoped<INotificationDispatcher, NotificationDispatcher>();
 
 // -------------------------------------------------------

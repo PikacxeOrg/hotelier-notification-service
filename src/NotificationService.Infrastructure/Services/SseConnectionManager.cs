@@ -8,7 +8,7 @@ namespace NotificationService.Infrastructure;
 /// <see cref="NotificationDispatcher"/> can push real-time events to
 /// connected browser clients.
 /// </summary>
-public class SseConnectionManager
+public class SseConnectionManager : ISseConnectionManager
 {
     // userId → list of open channels (one per browser tab)
     private readonly ConcurrentDictionary<Guid, ConcurrentBag<Channel<string>>> _connections = new();

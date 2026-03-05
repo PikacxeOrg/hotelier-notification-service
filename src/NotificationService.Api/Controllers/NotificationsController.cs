@@ -16,7 +16,7 @@ namespace NotificationService.Api;
 public class NotificationsController(
     IMongoDatabase db,
     ILogger<NotificationsController> logger,
-    SseConnectionManager sseManager) : ControllerBase
+    ISseConnectionManager sseManager) : ControllerBase
 {
     private IMongoCollection<Notification> Notifications
         => db.GetCollection<Notification>("notifications");
@@ -226,9 +226,9 @@ public class NotificationsController(
             return;
         }
 
-        Response.Headers["Content-Type"]      = "text/event-stream";
-        Response.Headers["Cache-Control"]     = "no-cache";
-        Response.Headers["Connection"]        = "keep-alive";
+        Response.Headers["Content-Type"] = "text/event-stream";
+        Response.Headers["Cache-Control"] = "no-cache";
+        Response.Headers["Connection"] = "keep-alive";
         Response.Headers["X-Accel-Buffering"] = "no"; // disable nginx buffering
 
         var reader = sseManager.Subscribe(userId.Value);

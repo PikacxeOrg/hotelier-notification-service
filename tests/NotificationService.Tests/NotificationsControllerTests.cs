@@ -12,6 +12,7 @@ using Moq;
 
 using NotificationService.Api;
 using NotificationService.Domain;
+using NotificationService.Infrastructure;
 
 namespace NotificationService.Tests;
 
@@ -31,7 +32,7 @@ public class NotificationsControllerTests : IClassFixture<MongoFixture>
     private NotificationsController CreateController(Guid? userId = null)
     {
         var logger = new Mock<ILogger<NotificationsController>>();
-        var controller = new NotificationsController(_db, logger.Object);
+        var controller = new NotificationsController(_db, logger.Object, new Mock<ISseConnectionManager>().Object);
 
         var claims = new[]
         {
@@ -304,7 +305,7 @@ public class NotificationsControllerTests : IClassFixture<MongoFixture>
     public async Task GetMyNotifications_NoAuth_ReturnsUnauthorized()
     {
         var logger = new Mock<ILogger<NotificationsController>>();
-        var controller = new NotificationsController(_db, logger.Object);
+        var controller = new NotificationsController(_db, logger.Object, new Mock<ISseConnectionManager>().Object);
         // No user set on HttpContext
         controller.ControllerContext = new ControllerContext
         {
