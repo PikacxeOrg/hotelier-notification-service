@@ -24,7 +24,7 @@ public class NotificationDispatcherTests : IClassFixture<MongoFixture>
     }
 
     private NotificationDispatcher CreateSut() =>
-        new(_db, new Mock<ILogger<NotificationDispatcher>>().Object);
+        new(_db, new Mock<ILogger<NotificationDispatcher>>().Object, new Mock<ISseConnectionManager>().Object);
 
     private static Notification CreateTestNotification(Guid recipientId) => new()
     {
